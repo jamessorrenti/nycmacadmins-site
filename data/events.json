@@ -15,6 +15,7 @@
     ],
     "sponsor": "Rippling IT",
     "sponsor_info": "Thanks to this month's sponsor, Rippling IT, for providing food and refreshments.",
+    "sponsor_link": "http://rippling.com/it",
     "signup_link": "https://www.eventbrite.com/e/nyc-mac-admins-meetup-tickets-1956483608139?aff=oddtdtcreator",
     "contact_email": "info@nycmacadmins.com"
   },
@@ -34,6 +35,7 @@
     ],
     "sponsor": "Allwhere",
     "sponsor_info": "Thanks to this month's sponsor, Allwhere, for providing food and refreshments.",
+    "sponsor_link": "http://allwhere.co/",
     "signup_link": "https://forms.gle/huusSAkQ8TQvG5ET6",
     "contact_email": "info@nycmacadmins.com"
   },
@@ -54,8 +56,8 @@
     ],
     "sponsor": "Addigy",
     "sponsor_info": "Thanks to this month's sponsor, Addigy, for providing food and refreshments.",
+    "sponsor_link": "Addigy",
     "signup_link": "https://forms.gle/nqDXZ9GqR8J6JmA5A",
-    "contact_email": "info@nycmacadmins.com",
-    "sponsor_link": "https://addigy.com"
+    "contact_email": "info@nycmacadmins.com"
   }
 ]
