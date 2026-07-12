@@ -1,126 +1,125 @@
-# Setup Guide — Google Sheet → GitHub → Site
+# Setup Guide — Google Sheet → GitHub Action → Site
 
-One-time setup for the events pipeline. When you're done, editing the Google
-Sheet and clicking **NYCMA ▸ Publish events to site** updates the website and
-RSS feed automatically.
+The Google Sheet is the events CMS. A GitHub Action pulls it as CSV on a
+schedule (and on demand), regenerates `data/events.json`, and commits it —
+that commit triggers the normal Hugo deploy. No Apps Script, no credentials,
+no service account: the sheet is shared **"Anyone with the link" → Viewer**,
+and its CSV export endpoint is a plain public URL.
 
 ```
-Google Sheet ──(Apps Script menu)──▶ data/events.json in this repo
-                                          │
-                              push triggers deploy.yaml
-                                          ▼
-                          Hugo build ──▶ GitHub Pages
-                          (event pages, home listing, RSS feed)
+Google Sheet (Anyone with the link: Viewer)
+      │  hourly cron + workflow_dispatch
+      ▼
+.github/workflows/events-sync.yaml
+      │  scripts/sync_events.py  (stdlib Python — fetch CSV, parse, diff)
+      ▼
+data/events.json  (committed only if it changed)
+      │  push triggers deploy.yaml
+      ▼
+Hugo build ──▶ GitHub Pages
+  (event pages, home listing, past archive, RSS feed)
 ```
 
-## 1. Create the Google Sheet
+## 1. The sheet
 
-1. Create a new Google Sheet (any name, e.g. **NYCMA Events**).
-2. Rename the first tab to **`Events`** (exact name, capital E).
-3. **File → Import → Upload** → select [`docs/events_import.csv`](events_import.csv)
-   from this repo → Import location: **Replace current sheet**.
-   - Headers land in row 1; the July 2026 meetup is row 2.
-4. The sheet can stay **private** — the script reads it directly.
+Live sheet: https://docs.google.com/spreadsheets/d/1VwqUoKC8n1I-Ao7tkOl50kusD05B0QITXvwu2kUljic/edit
+
+Sharing must stay **Anyone with the link → Viewer** (Share button, top
+right) — that's what makes the CSV export URL work without authentication.
+The first tab's data is what gets pulled (`gid=0`); if you add more tabs,
+keep events on the first one or update `EVENTS_SHEET_GID` (see §3).
+
+To seed a fresh copy of the sheet instead: **File → Import → Upload** →
+[`docs/events_import.csv`](events_import.csv) → import location **Replace
+current sheet**.
 
 ### Column reference
 
 | Column | Required | Notes |
 |---|---|---|
-| `slug` | no | URL id, e.g. `2026-07-21-july-meetup`. Auto-derived from date+title if blank. **Don't change it after publishing** (it's the RSS guid + URL). |
-| `status` | no | `published` (default) / `draft` (never published) / `canceled` (shows a Canceled banner) |
+| `slug` | no | URL id, e.g. `2026-07-21-july-meetup`. Auto-derived from date+title if blank. **Don't change it after publishing** (it's the RSS guid + page URL). |
+| `status` | no | `published` (default) / `draft` (never synced) / `canceled` (shows a Canceled banner) |
 | `title` | **yes** | Event name |
-| `start` | **yes** | Presentations start. A normal Sheets date-time (e.g. `7/21/2026 16:30`) or ISO `2026-07-21T16:30:00-04:00` — both work |
-| `doors` | no | Entry/doors-open time, same formats |
+| `date` | **yes** | Event date, e.g. `7/21/2026` |
+| `start` | **yes** | Time presentations start, e.g. `4:30 PM` |
+| `doors` | no | Time entry/doors open, e.g. `4:00 PM` |
 | `location_name` | no | Venue name |
 | `address` | no | Full street address (becomes a map link) |
-| `general_info` | no | Free-text logistics ("Entry begins at 4:00pm…") |
+| `general_info` | no | Free-text logistics |
 | `presentation_title` | no | Talk title |
 | `presentation_info` | no | Talk abstract |
-| `speakers` | no | Comma-separated: `John Mahlman (@jmahlman), Bob Gendler (@boberito)` |
+| `speakers` | no | Comma-separated: `John Mahlman, Bob Gendler` |
 | `sponsor` | no | Sponsor name (shows as a chip on cards) |
 | `sponsor_info` | no | Sponsor thank-you blurb |
 | `signup_link` | no | Registration URL (the Register button) |
 | `contact_email` | no | Defaults to info@nycmacadmins.com |
 
-## 2. Add the Apps Script
+`date` + `start` (and `date` + `doors`) are combined by the sync script into
+a full timestamp with the correct New York UTC offset — DST is handled
+automatically (e.g. December sits at `-05:00`, July at `-04:00`).
 
-1. In the sheet: **Extensions → Apps Script**.
-2. Delete the default `Code.gs` content and paste in
-   [`apps_script/githubEventsPublisher.js`](../apps_script/githubEventsPublisher.js).
-3. (Optional) **Project Settings → check "Show appsscript.json"** and replace it
-   with [`apps_script/appsscript.json`](../apps_script/appsscript.json).
-4. Save. Reload the spreadsheet — an **NYCMA** menu appears.
+## 2. The GitHub Action
 
-## 3. Create the GitHub token (you do this part)
+Already set up in this repo: [`.github/workflows/events-sync.yaml`](../.github/workflows/events-sync.yaml).
 
-1. GitHub → **Settings → Developer settings → Fine-grained personal access tokens → Generate new token**.
-2. Name: `nycma-events-publisher`. Expiration: your call (set a calendar
-   reminder if it expires).
-3. **Repository access:** Only select repositories → `nycmacadmins-site`.
-4. **Permissions → Repository permissions → Contents: Read and write.** Nothing else.
-5. Generate and copy the token.
+- Runs **hourly** (`17 * * * *`) and on **manual dispatch**
+  (Actions tab → "Sync events from Google Sheet" → Run workflow).
+- Calls [`scripts/sync_events.py`](../scripts/sync_events.py), which fetches
+  the sheet's CSV export, parses it, and diffs against the committed
+  `data/events.json`.
+- Commits **only if something changed** — no empty commits, no noise.
+- The commit triggers `.github/workflows/deploy.yaml`, which rebuilds and
+  redeploys the site.
+- No repo secrets required — the sheet URL is public.
 
-## 4. Configure Script Properties
+Latency from sheet edit to live site: usually under an hour (next cron
+tick), or immediate via manual **Run workflow**.
 
-In the Apps Script editor: **Project Settings (gear) → Script Properties → Add
-script property**:
+## 3. Changing the sheet (if you ever recreate it)
 
-| Property | Value |
+If the Google Sheet is ever recreated, its ID changes. Update the default in
+[`scripts/sync_events.py`](../scripts/sync_events.py) (`DEFAULT_SHEET_ID`),
+or override without a code change via repo **Settings → Secrets and
+variables → Actions → Variables**:
+
+| Variable | Value |
 |---|---|
-| `GITHUB_PAT` | the token from step 3 |
-| `GITHUB_OWNER` | `jamessorrenti` |
-| `GITHUB_REPO` | `nycmacadmins-site` |
-| `GITHUB_BRANCH` | `main` (optional — this is the default) |
+| `EVENTS_SHEET_ID` | the sheet's ID from its URL |
+| `EVENTS_SHEET_GID` | the tab's `gid` (default `0`, the first tab) |
 
-The token lives **only** here — never in the repo.
+Then reference them in the workflow's `env:` for the sync step if you add
+variables — the script reads `EVENTS_SHEET_ID` / `EVENTS_SHEET_GID` from the
+environment first, falling back to the defaults baked into the script.
 
-## 5. First publish
+## 4. Testing the sync locally
 
-1. In the sheet: **NYCMA ▸ Validate rows** — fix anything it flags.
-2. **NYCMA ▸ Publish events to site** — first run asks you to authorize the
-   script (it needs: read this spreadsheet, call an external service).
-3. Check the repo: `data/events.json` should have a fresh commit
-   ("Sync events from sheet — …"), and the **Deploy Hugo site to Pages**
-   action should be running.
+```sh
+python3 scripts/sync_events.py
+git diff data/events.json
+```
 
-Publishing is idempotent — if the sheet matches what's already on GitHub, the
-script skips the commit ("No changes").
+Requires nothing beyond Python 3.9+ (stdlib only — `csv`, `urllib`,
+`zoneinfo`).
 
-## 6. GitHub Pages (one time, in the repo)
-
-1. Push this repo to GitHub as `nycmacadmins-site`.
-2. Repo **Settings → Pages → Source: GitHub Actions**.
-3. First push to `main` deploys to
-   `https://jamessorrenti.github.io/nycmacadmins-site/`.
-
-## 7. Custom domain (later)
+## 5. Custom domain (later)
 
 When the domain owners are on board:
 
 1. Add a `CNAME` file at the repo root containing `nycmacadmins.com`.
 2. Update `baseURL` in `hugo.yaml` to `https://nycmacadmins.com/`.
-3. DNS: apex `A` records → GitHub Pages IPs (`185.199.108.153`, `.109.`, `.110.`, `.111.`)
-   and `www` CNAME → `jamessorrenti.github.io`.
+3. DNS: apex `A` records → GitHub Pages IPs (`185.199.108.153`, `.109.`,
+   `.110.`, `.111.`) and `www` CNAME → the Pages host.
 4. Repo **Settings → Pages → Custom domain** → `nycmacadmins.com` → wait for
    the check → **Enforce HTTPS**.
 
-## Optional: auto-publish on edit
-
-The manual menu matches how RipSS works and avoids publishing half-edited
-rows. If you later want edits to publish automatically:
-
-- Apps Script editor → **Triggers (clock icon) → Add Trigger** →
-  function `publishEventsToGitHub`, event source **From spreadsheet**,
-  event type **On change**.
-- Consider keeping rows as `draft` while editing so half-finished events
-  never go live.
-
 ## Troubleshooting
 
-- **"Publish skipped: missing Script Properties"** — step 4 wasn't completed.
-- **`PUT data/events.json returned 401/403`** — PAT expired or lacks
-  Contents: Read and write on this repo. Make a new one (step 3).
-- **Event missing from the site** — check `status` isn't `draft`, the `start`
-  date parses (**NYCMA ▸ Validate rows**), and the row has a `title`.
-- **Site didn't rebuild** — check the repo's Actions tab; the deploy workflow
-  runs on every push to `main`.
+- **Workflow runs but nothing updates** — check the Action's log for
+  `sync_events.py` output; a per-row `skip:` message means that row failed
+  to parse (bad date/time or missing title/date/start).
+- **A field parses wrong** — the sheet's `date` must be `M/D/YYYY` (or
+  `YYYY-MM-DD`); `start`/`doors` must be a bare time like `4:30 PM` or
+  `16:30`.
+- **Event missing from the site** — confirm `status` isn't `draft`.
+- **Site didn't rebuild** — check the repo's Actions tab; `deploy.yaml` runs
+  on every push to `main`, including the bot's sync commits.

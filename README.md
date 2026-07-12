@@ -10,11 +10,13 @@ Apple devices in and around New York City.
 ## How it works
 
 ```
-Google Sheet (events CMS, private)
-      │  NYCMA ▸ Publish events to site   (Apps Script menu)
+Google Sheet ("Anyone with the link" viewer, public CSV export)
+      │  hourly cron + workflow_dispatch
       ▼
-data/events.json  (pushed via GitHub Contents API)
-      │  push triggers .github/workflows/deploy.yaml
+.github/workflows/events-sync.yaml → scripts/sync_events.py
+      │  fetches CSV, parses, commits data/events.json only if changed
+      ▼
+push triggers .github/workflows/deploy.yaml
       ▼
 Hugo build ──▶ GitHub Pages
   ├─ home page: upcoming events
@@ -23,12 +25,12 @@ Hugo build ──▶ GitHub Pages
   └─ /events/index.xml — RSS feed
 ```
 
-- Events are edited in a **Google Sheet** — no git required for organizers.
-  See **[docs/SETUP.md](docs/SETUP.md)** for the one-time pipeline setup and
-  the column reference; [docs/events_import.csv](docs/events_import.csv) seeds
-  the sheet.
-- The Apps Script lives in [apps_script/](apps_script/) (source of record —
-  paste into the sheet's Script editor).
+- Events are edited in a **Google Sheet** — no git, no Apps Script, no
+  credentials. See **[docs/SETUP.md](docs/SETUP.md)** for the column
+  reference and how the sync works;
+  [docs/events_import.csv](docs/events_import.csv) seeds a fresh sheet.
+- [`scripts/sync_events.py`](scripts/sync_events.py) is stdlib-only Python —
+  no dependencies to install.
 - [`content/events/_content.gotmpl`](content/events/_content.gotmpl) turns
   `data/events.json` into pages at build time; no per-event markdown files.
 
@@ -39,8 +41,10 @@ brew install hugo        # extended edition
 hugo server              # http://localhost:1313/
 ```
 
-Edit `data/events.json` directly for local testing — in production it is
-overwritten by the sheet publish, so real event changes go in the sheet.
+Edit `data/events.json` directly for local testing, or run
+`python3 scripts/sync_events.py` to pull the live sheet. In production
+`events.json` is overwritten by the hourly sync, so real event changes go in
+the sheet, not this file.
 
 ## Site structure
 

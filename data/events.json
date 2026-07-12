@@ -1,15 +1,53 @@
 [
   {
+    "slug": "2025-12-02-december-meetup",
+    "status": "published",
+    "title": "NYC Mac Admins December 2025 Meetup",
+    "start": "2025-12-02T16:30:00-05:00",
+    "doors": "2025-12-02T16:00:00-05:00",
+    "location_name": "Apple, 11 Penn Plaza",
+    "address": "11 Pennsylvania Plaza, New York, NY 10001",
+    "general_info": "Entry begins at 4:00pm with presentations and discussions beginning at 4:30pm.",
+    "presentation_title": "Governing GenAI on macOS",
+    "presentation_info": "Josh Mullis, VP of IT & InfoSec at Productiv, discusses how Mac admins and security teams can safely identify, assess, and manage generative AI usage across fleets of Apple devices. Generative AI apps have rapidly spread through enterprise macOS environment, from browser extensions and code assistants to native clients that quietly interact with external models, introducing unmonitored data flows, opaque APIs, and unpredictable storage behaviors.",
+    "speakers": [
+      "Josh Mullis"
+    ],
+    "sponsor": "Rippling IT",
+    "sponsor_info": "Thanks to this month's sponsor, Rippling IT, for providing food and refreshments.",
+    "signup_link": "https://www.eventbrite.com/e/nyc-mac-admins-meetup-tickets-1956483608139?aff=oddtdtcreator",
+    "contact_email": "info@nycmacadmins.com"
+  },
+  {
+    "slug": "2026-04-09-april-meetup",
+    "status": "published",
+    "title": "NYC Mac Admins April 2026 Meetup",
+    "start": "2026-04-09T16:30:00-04:00",
+    "doors": "2026-04-09T16:00:00-04:00",
+    "location_name": "Apple, 11 Penn Plaza",
+    "address": "11 Pennsylvania Plaza, New York, NY 10001",
+    "general_info": "Entry begins at 4:00pm with presentations and discussions beginning at 4:30pm.\nAlso, John Mahlman from the Mac Admins Foundation will also be presenting some 2026 updates about MAF.",
+    "presentation_title": "Mac @ EY Program",
+    "presentation_info": "Jeff Ward, Associate Director of Desktop Configuration Product Management at EY, discusses the company's Mac @ EY program and the specific configurations it uses to manage Macs in Microsoft Intune.",
+    "speakers": [
+      "Jeff Ward"
+    ],
+    "sponsor": "Allwhere",
+    "sponsor_info": "Thanks to this month's sponsor, Allwhere, for providing food and refreshments.",
+    "signup_link": "https://forms.gle/huusSAkQ8TQvG5ET6",
+    "contact_email": "info@nycmacadmins.com"
+  },
+  {
     "slug": "2026-07-21-july-meetup",
     "status": "published",
     "title": "NYC Mac Admins July 2026 Meetup",
     "start": "2026-07-21T16:30:00-04:00",
     "doors": "2026-07-21T16:00:00-04:00",
-    "location_name": "11 Pennsylvania Plaza",
+    "location_name": "Apple, 11 Penn Plaza",
     "address": "11 Pennsylvania Plaza, New York, NY 10001",
     "general_info": "Entry begins at 4:00pm with presentations and discussions beginning at 4:30pm.",
     "presentation_title": "mSCP 2.0",
-    "presentation_info": "John Mahlman (@jmahlman) and Bob Gendler (@boberito) discuss the new mSCP 2.0 release, which provides a unified codebase that eliminates the need for separate branches per macOS version. The macOS Security Compliance Project (mSCP) is an open source effort to provide a programmatic approach to generating security guidance for macOS.",
+    "presentation_info": "John Mahlman and Bob Gendler discuss the new mSCP 2.0 release, which provides a unified codebase that eliminates the need for separate branches per macOS version. The macOS Security Compliance Project (mSCP) is an open source effort to provide a programmatic approach to generating security guidance for macOS.",
     "speakers": [
       "John Mahlman (@jmahlman)",
       "Bob Gendler (@boberito)"

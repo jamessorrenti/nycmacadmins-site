@@ -1,0 +1,30 @@
+name: Sync events from Google Sheet
+
+on:
+  schedule:
+    - cron: "17 * * * *" # hourly
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Sync events.json from the sheet
+        run: python3 scripts/sync_events.py
+
+      - name: Commit if changed
+        run: |
+          git config user.name "nycma-bot"
+          git config user.email "bot@nycmacadmins.com"
+          git add data/events.json
+          git diff --cached --quiet || git commit -m "Sync events from sheet"
+          git push
