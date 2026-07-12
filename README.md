@@ -3,8 +3,8 @@
 Community site for **NYC Mac Admins** — meetups for the people who manage
 Apple devices in and around New York City.
 
-- **Live site:** https://jamessorrenti.github.io/nycmacadmins-site/ *(custom domain nycmacadmins.com planned)*
-- **Events RSS feed:** `/events/index.xml`
+- **Live site:** https://nycmacadmins.com/
+- **Events RSS feed:** https://nycmacadmins.com/events/index.xml
 - **Community:** [#newyork](https://macadmins.slack.com/archives/C3APLCT1R) on the [Mac Admins Slack](https://www.macadmins.org/) · info@nycmacadmins.com
 
 ## How it works
@@ -50,7 +50,7 @@ overwritten by the sheet publish, so real event changes go in the sheet.
 | `layouts/` | Templates: home, event single/list, RSS (`_default/rss.xml`) |
 | `static/css/main.css` | Design tokens: NYC subway yellow `#F4CE47`, blue `#314FA6`, ink `#111214`; Oswald (display) + Lato (body) |
 | `static/fonts/` | Self-hosted woff2 (OFL licenses included) |
-| `content/*.md` | About, Code of Conduct, Sponsors |
+| `content/*.md` | About, Code of Conduct, Speakers, Sponsors |
 | `docs/` | Setup guide + sheet seed CSV |
 
 ## Deploying

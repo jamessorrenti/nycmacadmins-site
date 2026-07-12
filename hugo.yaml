@@ -29,9 +29,12 @@ menu:
     - name: "Code of Conduct"
       url: "/code-of-conduct/"
       weight: 40
+    - name: "Speakers"
+      url: "/speakers/"
+      weight: 50
     - name: "Sponsors"
       url: "/sponsors/"
-      weight: 50
+      weight: 60
 
 markup:
   goldmark:
