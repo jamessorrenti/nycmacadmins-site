@@ -1,0 +1,28 @@
+<header class="site-header">
+  <div class="container header-inner">
+    {{ partial "brand.html" . }}
+
+    <nav class="main-nav" aria-label="Primary">
+      <ul>
+        {{ range .Site.Menus.main }}
+        <li><a href="{{ .URL | relURL }}">{{ .Name }}</a></li>
+        {{ end }}
+      </ul>
+    </nav>
+
+    <a class="btn btn-small btn-primary header-cta" href="{{ .Site.Params.slack.channel }}" target="_blank" rel="noopener">Join {{ .Site.Params.slack.channelName }}</a>
+
+    <button class="nav-toggle" aria-label="Toggle navigation" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+
+  <nav class="mobile-nav" aria-label="Mobile">
+    <ul>
+      {{ range .Site.Menus.main }}
+      <li><a href="{{ .URL | relURL }}">{{ .Name }}</a></li>
+      {{ end }}
+      <li><a class="btn btn-primary" href="{{ .Site.Params.slack.channel }}" target="_blank" rel="noopener">Join {{ .Site.Params.slack.channelName }}</a></li>
+    </ul>
+  </nav>
+</header>

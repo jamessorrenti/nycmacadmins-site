@@ -1,0 +1,87 @@
+{{ define "main" }}
+
+{{ $isPast := lt (add .Date.Unix 21600) now.Unix }}
+{{ $canceled := eq .Params.status "canceled" }}
+
+<section class="event-hero">
+  <div class="container">
+    <p class="eyebrow">{{ .Date.Format "Monday, January 2, 2006" }} &middot; {{ .Date.Format "3:04 PM" }}</p>
+    <h1>{{ .Title }}</h1>
+    <div class="event-hero-meta">
+      {{ if $canceled }}<span class="canceled-chip">Canceled</span>{{ end }}
+      {{ if and .Params.location_name (not (strings.HasPrefix .Params.address .Params.location_name)) }}
+      <span>{{ .Params.location_name }}</span>
+      {{ end }}
+      {{ with .Params.address }}
+      <a href="https://maps.apple.com/?q={{ . | urlquery }}" target="_blank" rel="noopener">{{ . }}</a>
+      {{ end }}
+    </div>
+    {{ if and .Params.signup_link (not $isPast) (not $canceled) }}
+    <div class="event-hero-actions">
+      <a class="btn btn-primary" href="{{ .Params.signup_link }}" target="_blank" rel="noopener">Register for this meetup</a>
+    </div>
+    {{ end }}
+  </div>
+</section>
+
+<section class="event-body">
+  <div class="container event-body-grid">
+    <div class="event-main">
+      {{ with .Params.general_info }}
+      <div class="event-section">
+        <h2>Details</h2>
+        <p>{{ . }}</p>
+      </div>
+      {{ end }}
+
+      {{ if or .Params.presentation_title .Params.presentation_info }}
+      <div class="event-section">
+        <h2>Presentation</h2>
+        {{ with .Params.presentation_title }}<p class="talk-heading">{{ . }}</p>{{ end }}
+        {{ with .Params.speakers }}<p><em>Presented by {{ delimit . ", " }}</em></p>{{ end }}
+        {{ with .Params.presentation_info }}<p>{{ . }}</p>{{ end }}
+      </div>
+      {{ end }}
+
+      {{ with .Params.sponsor_info }}
+      <div class="event-section">
+        <h2>Sponsor</h2>
+        <p>{{ . }}</p>
+      </div>
+      {{ end }}
+
+      {{ with .Content }}{{ . }}{{ end }}
+    </div>
+
+    <aside class="event-aside">
+      <h3>When</h3>
+      <p>{{ .Date.Format "Monday, January 2, 2006" }}</p>
+      <p>Starts at {{ .Date.Format "3:04 PM" }}</p>
+      {{ with .Params.doors }}<p>Doors open {{ (time.AsTime .).Format "3:04 PM" }}</p>{{ end }}
+
+      {{ if or .Params.location_name .Params.address }}
+      <h3>Where</h3>
+      {{ if and .Params.location_name (not (strings.HasPrefix .Params.address .Params.location_name)) }}
+      <p>{{ .Params.location_name }}</p>
+      {{ end }}
+      {{ with .Params.address }}
+      <p><a href="https://maps.apple.com/?q={{ . | urlquery }}" target="_blank" rel="noopener">{{ . }}</a></p>
+      {{ end }}
+      {{ end }}
+
+      {{ with .Params.sponsor }}
+      <h3>Sponsor</h3>
+      <p>{{ . }}</p>
+      {{ end }}
+
+      <h3>Contact</h3>
+      <p><a href="mailto:{{ .Params.contact_email | default .Site.Params.email }}">{{ .Params.contact_email | default .Site.Params.email }}</a></p>
+
+      {{ if and .Params.signup_link (not $isPast) (not $canceled) }}
+      <a class="btn btn-primary" href="{{ .Params.signup_link }}" target="_blank" rel="noopener">Register</a>
+      {{ end }}
+    </aside>
+  </div>
+</section>
+
+{{ end }}

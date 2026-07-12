@@ -1,0 +1,28 @@
+{{- /* HTML body for one event's RSS <description>. Context: the event page. */ -}}
+<p><strong>{{ .Date.Format "Monday, January 2, 2006" }} @ {{ .Date.Format "3:04 PM" }}</strong></p>
+{{- with .Params.address }}
+<p>Event Address: {{ . }}</p>
+{{- end }}
+{{- with .Params.doors }}
+<p>Doors open at {{ (time.AsTime .).Format "3:04 PM" }}.</p>
+{{- end }}
+{{- with .Params.general_info }}
+<p>{{ . }}</p>
+{{- end }}
+{{- if or .Params.presentation_title .Params.presentation_info }}
+<p><strong>Presentation{{ with .Params.presentation_title }}: {{ . }}{{ end }}</strong>
+{{- with .Params.speakers }} — presented by {{ delimit . ", " }}{{ end }}</p>
+{{- with .Params.presentation_info }}
+<p>{{ . }}</p>
+{{- end }}
+{{- end }}
+{{- with .Params.sponsor_info }}
+<p>{{ . }}</p>
+{{- end }}
+{{- with .Params.signup_link }}
+<p>Registration link: <a href="{{ . }}">{{ . }}</a></p>
+{{- end }}
+{{- if eq .Params.status "canceled" }}
+<p><strong>This event has been CANCELED.</strong></p>
+{{- end }}
+<p>Contact us at {{ .Params.contact_email | default site.Params.email }}</p>

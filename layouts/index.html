@@ -1,0 +1,99 @@
+{{ define "main" }}
+
+{{/* Upcoming = start + 6h grace is still in the future; past = otherwise. */}}
+{{ $events := where site.RegularPages "Section" "events" }}
+{{ $upcoming := slice }}
+{{ $past := slice }}
+{{ range $events }}
+  {{ if ge (add .Date.Unix 21600) now.Unix }}
+    {{ $upcoming = $upcoming | append . }}
+  {{ else }}
+    {{ $past = $past | append . }}
+  {{ end }}
+{{ end }}
+{{ $upcoming = sort $upcoming "Date" "asc" }}
+
+<!-- HERO -->
+<section class="hero">
+  <div class="container hero-inner">
+    <div class="bullets hero-bullets" aria-hidden="true"><span class="bullet bullet-n">N</span><span class="bullet bullet-y">Y</span><span class="bullet bullet-c">C</span></div>
+    <h1 class="hero-title">Mac Admins,<br><span class="accent">New York City.</span></h1>
+    <p class="hero-lede">
+      A community meetup for the people who manage Apple devices — Mac admins, engineers,
+      help desk heroes, and IT leaders in and around NYC. Presentations, discussions,
+      food, and good company.
+    </p>
+    <div class="hero-actions">
+      <a href="#events" class="btn btn-primary">See upcoming events</a>
+      <a href="{{ .Site.Params.slack.channel }}" class="btn btn-ghost-light" target="_blank" rel="noopener">Join {{ .Site.Params.slack.channelName }} on Slack</a>
+    </div>
+  </div>
+  {{ partial "skyline.html" . }}
+</section>
+
+<!-- UPCOMING EVENTS -->
+<section id="events" class="section section-soft">
+  <div class="container">
+    <div class="section-head">
+      <p class="eyebrow">Meetups</p>
+      <h2>Upcoming Events</h2>
+      <p class="section-lede">
+        We meet regularly around the city. Entry is free — just register so we know
+        how much food to order.
+      </p>
+    </div>
+
+    <div class="event-grid">
+      {{ if $upcoming }}
+        {{ range $i, $e := $upcoming }}
+          {{ partial "event-card.html" (dict "page" $e "featured" (eq $i 0)) }}
+        {{ end }}
+      {{ else }}
+        <div class="empty-state">
+          <p>No meetups on the calendar right now. Announcements land first in
+          <a href="{{ .Site.Params.slack.channel }}" target="_blank" rel="noopener">{{ .Site.Params.slack.channelName }}</a> —
+          or subscribe to the {{ with .Site.GetPage "/events" }}<a href="{{ .Permalink }}index.xml">events feed</a>{{ end }}.</p>
+        </div>
+      {{ end }}
+    </div>
+
+    <div class="events-foot">
+      <a class="btn btn-ghost" href="{{ "events/" | relURL }}">Past meetups &rarr;</a>
+    </div>
+  </div>
+</section>
+
+<!-- JOIN / COMMUNITY -->
+<section id="join" class="section section-dark">
+  <div class="container">
+    <div class="section-head">
+      <p class="eyebrow eyebrow-light">Get Involved</p>
+      <h2>Join the Community</h2>
+      <p class="section-lede section-lede-light">
+        NYC Mac Admins is part of the wider Mac Admins community — thousands of
+        practitioners sharing what works.
+      </p>
+    </div>
+
+    <div class="join-grid">
+      <div class="join-card">
+        <h3>Slack</h3>
+        <p>The conversation happens in {{ .Site.Params.slack.channelName }} on the Mac Admins Slack. Meetup announcements land there first.</p>
+        <a class="link" href="{{ .Site.Params.slack.org }}" target="_blank" rel="noopener">Get an invite &rarr;</a><br>
+        <a class="link" href="{{ .Site.Params.slack.channel }}" target="_blank" rel="noopener">Open {{ .Site.Params.slack.channelName }} &rarr;</a>
+      </div>
+      <div class="join-card">
+        <h3>Speak or Sponsor</h3>
+        <p>Have a talk in you, or want to sponsor food and refreshments for a meetup? We'd love to hear from you.</p>
+        <a class="link" href="mailto:{{ .Site.Params.email }}">{{ .Site.Params.email }} &rarr;</a>
+      </div>
+      <div class="join-card">
+        <h3>Subscribe</h3>
+        <p>Get every event in your RSS reader (or a Slack channel via <code>/feed subscribe</code>).</p>
+        {{ with .Site.GetPage "/events" }}<a class="link" href="{{ .Permalink }}index.xml">Events RSS feed &rarr;</a>{{ end }}
+      </div>
+    </div>
+  </div>
+</section>
+
+{{ end }}

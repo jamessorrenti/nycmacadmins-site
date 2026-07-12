@@ -1,0 +1,53 @@
+baseURL: "https://jamessorrenti.github.io/nycmacadmins-site/"
+locale: "en-us"
+title: "NYC Mac Admins"
+
+# Events are future-dated pages generated from data/events.json — build them.
+buildFuture: true
+
+disableKinds: ["taxonomy", "term"]
+
+params:
+  description: "NYC Mac Admins is a community meetup for Mac admins, engineers, and IT folks managing Apple devices in and around New York City."
+  email: "info@nycmacadmins.com"
+  slack:
+    org: "https://www.macadmins.org/"
+    channel: "https://macadmins.slack.com/archives/C3APLCT1R"
+    channelName: "#newyork"
+
+menu:
+  main:
+    - name: "Events"
+      url: "/#events"
+      weight: 10
+    - name: "Past Meetups"
+      url: "/events/"
+      weight: 20
+    - name: "About"
+      url: "/about/"
+      weight: 30
+    - name: "Code of Conduct"
+      url: "/code-of-conduct/"
+      weight: 40
+    - name: "Sponsors"
+      url: "/sponsors/"
+      weight: 50
+
+markup:
+  goldmark:
+    renderer:
+      unsafe: true
+
+outputs:
+  home:
+    - HTML
+  page:
+    - HTML
+  section:
+    - HTML
+    - RSS
+
+minify:
+  tdewolff:
+    html:
+      keepWhitespace: false

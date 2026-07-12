@@ -1,0 +1,22 @@
+[
+  {
+    "slug": "2026-07-21-july-meetup",
+    "status": "published",
+    "title": "NYC Mac Admins July 2026 Meetup",
+    "start": "2026-07-21T16:30:00-04:00",
+    "doors": "2026-07-21T16:00:00-04:00",
+    "location_name": "11 Pennsylvania Plaza",
+    "address": "11 Pennsylvania Plaza, New York, NY 10001",
+    "general_info": "Entry begins at 4:00pm with presentations and discussions beginning at 4:30pm.",
+    "presentation_title": "mSCP 2.0",
+    "presentation_info": "John Mahlman (@jmahlman) and Bob Gendler (@boberito) discuss the new mSCP 2.0 release, which provides a unified codebase that eliminates the need for separate branches per macOS version. The macOS Security Compliance Project (mSCP) is an open source effort to provide a programmatic approach to generating security guidance for macOS.",
+    "speakers": [
+      "John Mahlman (@jmahlman)",
+      "Bob Gendler (@boberito)"
+    ],
+    "sponsor": "Addigy",
+    "sponsor_info": "Thanks to this month's sponsor, Addigy, for providing food and refreshments.",
+    "signup_link": "https://forms.gle/nqDXZ9GqR8J6JmA5A",
+    "contact_email": "info@nycmacadmins.com"
+  }
+]

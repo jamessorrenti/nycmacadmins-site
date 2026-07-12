@@ -1,0 +1,31 @@
+{{/* Renders one event card.
+     Context: dict "page" <event page> "featured" <bool> "past" <bool> */}}
+{{ $p := .page }}
+{{ $featured := .featured | default false }}
+{{ $past := .past | default false }}
+<article class="event-card{{ if $featured }} event-featured{{ end }}">
+  <div class="date-badge{{ if $past }} date-badge-past{{ end }}">
+    <span class="month">{{ $p.Date.Format "Jan" }}</span>
+    <span class="day">{{ $p.Date.Format "2" }}</span>
+  </div>
+  <div class="event-card-body">
+    {{ if $featured }}<span class="next-label">Next Meetup</span>{{ end }}
+    <h3 class="event-card-title"><a href="{{ $p.RelPermalink }}">{{ $p.Title }}</a></h3>
+    <div class="event-meta">
+      <span><strong>{{ $p.Date.Format "Monday, January 2, 2006" }}</strong></span>
+      <span>{{ $p.Date.Format "3:04 PM" }}</span>
+      {{ with $p.Params.location_name }}<span>{{ . }}</span>{{ end }}
+      {{ if eq $p.Params.status "canceled" }}<span class="canceled-chip">Canceled</span>{{ end }}
+    </div>
+    {{ with $p.Params.presentation_title }}
+    <p class="event-card-talk"><span class="talk-title">{{ . }}</span>{{ with $p.Params.speakers }} — {{ delimit . ", " }}{{ end }}</p>
+    {{ end }}
+    <div class="event-card-cta">
+      {{ if and (not $past) $p.Params.signup_link (ne $p.Params.status "canceled") }}
+      <a class="btn btn-small btn-blue" href="{{ $p.Params.signup_link }}" target="_blank" rel="noopener">Register</a>
+      {{ end }}
+      <a class="btn btn-small btn-ghost" href="{{ $p.RelPermalink }}">Details</a>
+      {{ with $p.Params.sponsor }}<span class="sponsor-chip">Sponsored by {{ . }}</span>{{ end }}
+    </div>
+  </div>
+</article>

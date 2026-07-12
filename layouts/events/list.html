@@ -1,0 +1,46 @@
+{{ define "main" }}
+
+{{ $past := slice }}
+{{ range .RegularPages }}
+  {{ if lt (add .Date.Unix 21600) now.Unix }}
+    {{ $past = $past | append . }}
+  {{ end }}
+{{ end }}
+{{ $past = sort $past "Date" "desc" }}
+
+<section class="page-hero">
+  <div class="container">
+    <p class="eyebrow eyebrow-light">Archive</p>
+    <h1>Past Meetups</h1>
+  </div>
+</section>
+
+<section class="section section-soft">
+  <div class="container">
+    {{ if $past }}
+      {{ $year := "" }}
+      {{ range $past }}
+        {{ $y := .Date.Format "2006" }}
+        {{ if ne $y $year }}
+          {{ if ne $year "" }}</div>{{ end }}
+          {{ $year = $y }}
+          <h2 class="year-heading">{{ $y }}</h2>
+          <div class="event-grid">
+        {{ end }}
+        {{ partial "event-card.html" (dict "page" . "past" true) }}
+      {{ end }}
+      </div>
+    {{ else }}
+      <div class="empty-state">
+        <p>No past meetups yet — the first one is coming up! Check the
+        <a href="{{ "/" | relURL }}#events">upcoming events</a>.</p>
+      </div>
+    {{ end }}
+
+    <div class="events-foot">
+      <a class="btn btn-ghost" href="{{ "/" | relURL }}#events">&larr; Upcoming events</a>
+    </div>
+  </div>
+</section>
+
+{{ end }}

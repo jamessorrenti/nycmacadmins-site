@@ -1,0 +1,34 @@
+{{/* Content adapter: builds one page per event from data/events.json.
+     data/events.json is pushed to this repo by the Google Apps Script
+     publisher (apps_script/githubEventsPublisher.js) — the Google Sheet
+     is the single source of truth for events. */}}
+{{ range hugo.Data.events }}
+  {{ if ne (.status | default "published") "draft" }}
+    {{ $speakers := .speakers }}
+    {{ if not (reflect.IsSlice $speakers) }}
+      {{ $speakers = split (string ($speakers | default "")) "," }}
+    {{ end }}
+    {{ $page := dict
+      "kind" "page"
+      "path" .slug
+      "title" .title
+      "dates" (dict "date" (time.AsTime .start))
+      "params" (dict
+        "status" (.status | default "published")
+        "doors" (.doors | default "")
+        "location_name" (.location_name | default "")
+        "address" (.address | default "")
+        "general_info" (.general_info | default "")
+        "presentation_title" (.presentation_title | default "")
+        "presentation_info" (.presentation_info | default "")
+        "speakers" (apply $speakers "strings.TrimSpace" ".")
+        "sponsor" (.sponsor | default "")
+        "sponsor_info" (.sponsor_info | default "")
+        "signup_link" (.signup_link | default "")
+        "contact_email" (.contact_email | default "")
+      )
+      "content" (dict "mediaType" "text/markdown" "value" "")
+    }}
+    {{ $.AddPage $page }}
+  {{ end }}
+{{ end }}

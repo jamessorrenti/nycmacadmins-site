@@ -1,0 +1,24 @@
+# System Files
+.DS_Store
+Thumbs.db
+
+# Build Artifacts & Logs
+/public/
+/resources/_gen/
+.hugo_build.lock
+*.log
+
+# Dependency Management
+node_modules/
+.npm
+.yarn
+
+# Editor & Tooling Configurations
+.vscode/
+.idea/
+.claude/
+.cursor/
+
+# Environment & Security
+.env
+*.env.*
