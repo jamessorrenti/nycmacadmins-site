@@ -9,7 +9,7 @@ public, so this is a plain HTTP GET + parse.
 Sheet columns (header row, order doesn't matter):
   slug | status | title | date | start | doors | location_name | address |
   general_info | presentation_title | presentation_info | speakers |
-  sponsor | sponsor_info | signup_link | contact_email
+  sponsor | sponsor_info | sponsor_link | signup_link | contact_email
 
   date            M/D/YYYY                  (e.g. 7/21/2026)
   start / doors   bare time-of-day           (e.g. "4:30 PM"); doors optional
@@ -141,6 +141,7 @@ def build_event(row: dict) -> dict | None:
         "speakers": speakers,
         "sponsor": row_get(row, "sponsor"),
         "sponsor_info": row_get(row, "sponsor_info"),
+        "sponsor_link": row_get(row, "sponsor_link"),
         "signup_link": row_get(row, "signup_link"),
         "contact_email": row_get(row, "contact_email"),
     }

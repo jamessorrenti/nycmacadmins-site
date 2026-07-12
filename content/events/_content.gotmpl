@@ -1,7 +1,7 @@
 {{/* Content adapter: builds one page per event from data/events.json.
-     data/events.json is pushed to this repo by the Google Apps Script
-     publisher (apps_script/githubEventsPublisher.js) — the Google Sheet
-     is the single source of truth for events. */}}
+     data/events.json is synced from the Google Sheet by
+     scripts/sync_events.py (see .github/workflows/events-sync.yaml) — the
+     sheet is the single source of truth for events. */}}
 {{ range hugo.Data.events }}
   {{ if ne (.status | default "published") "draft" }}
     {{ $speakers := .speakers }}
@@ -24,6 +24,7 @@
         "speakers" (apply $speakers "strings.TrimSpace" ".")
         "sponsor" (.sponsor | default "")
         "sponsor_info" (.sponsor_info | default "")
+        "sponsor_link" (.sponsor_link | default "")
         "signup_link" (.signup_link | default "")
         "contact_email" (.contact_email | default "")
       )

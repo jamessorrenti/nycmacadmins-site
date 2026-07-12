@@ -51,6 +51,7 @@ current sheet**.
 | `speakers` | no | Comma-separated: `John Mahlman, Bob Gendler` |
 | `sponsor` | no | Sponsor name (shows as a chip on cards) |
 | `sponsor_info` | no | Sponsor thank-you blurb |
+| `sponsor_link` | no | Sponsor's website — makes the sponsor name clickable on the event detail page. Cell-level hyperlinks in the sheet aren't picked up by the CSV export, so the URL needs its own column, plain text. |
 | `signup_link` | no | Registration URL (the Register button) |
 | `contact_email` | no | Defaults to info@nycmacadmins.com |
 
