@@ -7,6 +7,7 @@ on:
 
 permissions:
   contents: write
+  actions: write # needed to trigger the deploy workflow below
 
 jobs:
   sync:
@@ -22,9 +23,24 @@ jobs:
         run: python3 scripts/sync_events.py
 
       - name: Commit if changed
+        id: commit
         run: |
           git config user.name "nycma-bot"
           git config user.email "bot@nycmacadmins.com"
           git add data/events.json
-          git diff --cached --quiet || git commit -m "Sync events from sheet"
-          git push
+          if git diff --cached --quiet; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            git commit -m "Sync events from sheet"
+            git push
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      # A push made with the default GITHUB_TOKEN does NOT trigger other
+      # workflows (GitHub's loop-prevention) — so deploy.yaml's `on: push`
+      # never fires for this bot's commits. Trigger it explicitly instead.
+      - name: Trigger site deploy
+        if: steps.commit.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run deploy.yaml --repo "${{ github.repository }}" --ref main
