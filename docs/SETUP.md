@@ -6,6 +6,9 @@ that commit triggers the normal Hugo deploy. No Apps Script, no credentials,
 no service account: the sheet is shared **"Anyone with the link" → Viewer**,
 and its CSV export endpoint is a plain public URL.
 
+The sheet's link is **not hardcoded** — it's a repo variable
+(`EVENTS_SHEET_URL`), so it can be swapped without touching code.
+
 ```
 Google Sheet (Anyone with the link: Viewer)
       │  hourly cron + workflow_dispatch
@@ -22,12 +25,16 @@ Hugo build ──▶ GitHub Pages
 
 ## 1. The sheet
 
-Live sheet: https://docs.google.com/spreadsheets/d/1VwqUoKC8n1I-Ao7tkOl50kusD05B0QITXvwu2kUljic/edit
+The live sheet's link is stored as the repo variable `EVENTS_SHEET_URL`
+(Settings → Secrets and variables → Actions → **Variables** tab) — a
+variable, not a secret, since the sheet itself is public. Check that tab for
+the current link rather than looking for it in code.
 
 Sharing must stay **Anyone with the link → Viewer** (Share button, top
 right) — that's what makes the CSV export URL work without authentication.
-The first tab's data is what gets pulled (`gid=0`); if you add more tabs,
-keep events on the first one or update `EVENTS_SHEET_GID` (see §3).
+The first tab's data is what gets pulled by default (`gid=0`); if events
+live on a different tab, include `#gid=<n>` in `EVENTS_SHEET_URL` (the
+script reads the `gid` straight out of the URL you paste in).
 
 To seed a fresh copy of the sheet instead: **File → Import → Upload** →
 [`docs/events_import.csv`](events_import.csv) → import location **Replace
@@ -69,38 +76,41 @@ Already set up in this repo: [`.github/workflows/events-sync.yaml`](../.github/w
   the sheet's CSV export, parses it, and diffs against the committed
   `data/events.json`.
 - Commits **only if something changed** — no empty commits, no noise.
-- The commit triggers `.github/workflows/deploy.yaml`, which rebuilds and
-  redeploys the site.
-- No repo secrets required — the sheet URL is public.
+- A push made with the default `GITHUB_TOKEN` does **not** trigger other
+  workflows (GitHub's own loop-prevention), so the sync step explicitly
+  triggers `deploy.yaml` afterward when it commits a change — the ordinary
+  `on: push` trigger alone would otherwise silently never fire for these
+  commits.
+- No repo secrets required — the sheet URL is public; it's still passed in
+  via a repo **variable**, not written into any file, so it can change
+  without a code edit.
 
 Latency from sheet edit to live site: usually under an hour (next cron
 tick), or immediate via manual **Run workflow**.
 
 ## 3. Changing the sheet (if you ever recreate it)
 
-If the Google Sheet is ever recreated, its ID changes. Update the default in
-[`scripts/sync_events.py`](../scripts/sync_events.py) (`DEFAULT_SHEET_ID`),
-or override without a code change via repo **Settings → Secrets and
-variables → Actions → Variables**:
+If the Google Sheet is ever recreated, update the repo variable — no code
+change needed:
 
-| Variable | Value |
-|---|---|
-| `EVENTS_SHEET_ID` | the sheet's ID from its URL |
-| `EVENTS_SHEET_GID` | the tab's `gid` (default `0`, the first tab) |
+Repo **Settings → Secrets and variables → Actions → Variables tab** →
+`EVENTS_SHEET_URL` → paste the new sheet's share link (Share → General
+access → Anyone with the link → Viewer, then copy the link).
 
-Then reference them in the workflow's `env:` for the sync step if you add
-variables — the script reads `EVENTS_SHEET_ID` / `EVENTS_SHEET_GID` from the
-environment first, falling back to the defaults baked into the script.
+The script accepts any of: the full share/edit link, a direct CSV export
+URL, or just the bare sheet ID — it extracts what it needs either way.
 
 ## 4. Testing the sync locally
 
 ```sh
+export EVENTS_SHEET_URL="https://docs.google.com/spreadsheets/d/<id>/edit?usp=sharing"
 python3 scripts/sync_events.py
 git diff data/events.json
 ```
 
 Requires nothing beyond Python 3.9+ (stdlib only — `csv`, `urllib`,
-`zoneinfo`).
+`zoneinfo`). Without `EVENTS_SHEET_URL` set, the script exits with a clear
+error instead of guessing.
 
 ## 5. Custom domain (later)
 

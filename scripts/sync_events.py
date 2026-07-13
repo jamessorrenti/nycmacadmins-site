@@ -6,6 +6,12 @@ Run by .github/workflows/events-sync.yaml on a schedule and on demand; no
 Apps Script or credentials involved — the sheet's CSV export endpoint is
 public, so this is a plain HTTP GET + parse.
 
+The sheet isn't hardcoded here: set the EVENTS_SHEET_URL environment
+variable to the sheet's share/edit link (or its ID, or a direct CSV export
+URL — any of those work) — in CI this comes from the repo variable
+EVENTS_SHEET_URL (Settings → Secrets and variables → Actions → Variables),
+not a secret, since the sheet itself is public.
+
 Sheet columns (header row, order doesn't matter):
   slug | status | title | date | start | doors | location_name | address |
   general_info | presentation_title | presentation_info | speakers |
@@ -36,13 +42,26 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 EVENTS_JSON_PATH = REPO_ROOT / "data" / "events.json"
 TZ = ZoneInfo("America/New_York")
 
-DEFAULT_SHEET_ID = "1VwqUoKC8n1I-Ao7tkOl50kusD05B0QITXvwu2kUljic"
-DEFAULT_GID = "0"
+_SHEET_ID_RE = re.compile(r"/d/([a-zA-Z0-9-_]+)")
+_GID_RE = re.compile(r"[?&#]gid=(\d+)")
 
 
 def sheet_csv_url() -> str:
-    sheet_id = os.environ.get("EVENTS_SHEET_ID", DEFAULT_SHEET_ID)
-    gid = os.environ.get("EVENTS_SHEET_GID", DEFAULT_GID)
+    """Build the CSV export URL from EVENTS_SHEET_URL, which may be a share/
+    edit link, a bare sheet ID, or an already-direct CSV export URL."""
+    raw = os.environ.get("EVENTS_SHEET_URL", "").strip()
+    if not raw:
+        raise SystemExit(
+            "EVENTS_SHEET_URL is not set. Set it to the sheet's share link "
+            "(Settings → Secrets and variables → Actions → Variables in "
+            "CI, or export it locally before running this script)."
+        )
+
+    id_match = _SHEET_ID_RE.search(raw)
+    sheet_id = id_match.group(1) if id_match else raw
+    gid_match = _GID_RE.search(raw)
+    gid = gid_match.group(1) if gid_match else "0"
+
     return f"https://docs.google.com/spreadsheets/d/{sheet_id}/export?format=csv&gid={gid}"
 
 
