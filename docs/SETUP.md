@@ -42,16 +42,28 @@ current sheet**.
 
 ### Column reference
 
+Columns marked **calendar** use the exact field names from
+[macadmins-calendar](https://github.com/macadminsdotorg/macadmins-calendar)
+(the community-wide Mac Admin events calendar) — this makes submitting a
+NYCMA meetup there a straight copy of those fields, no renaming or
+reshaping. Everything else is NYCMA-specific and unrelated to that project.
+
 | Column | Required | Notes |
 |---|---|---|
-| `slug` | no | URL id, e.g. `2026-07-21-july-meetup`. Auto-derived from date+title if blank. **Don't change it after publishing** (it's the RSS guid + page URL). |
+| `slug` | no | URL id, e.g. `2026-07-21-july-meetup`. Auto-derived from start_date+name if blank. **Don't change it after publishing** (it's the RSS guid + page URL). |
 | `status` | no | `published` (default) / `draft` (never synced) / `canceled` (shows a Canceled banner) |
-| `title` | **yes** | Event name |
-| `date` | **yes** | Event date, e.g. `7/21/2026` |
-| `start` | **yes** | Time presentations start, e.g. `4:30 PM` |
-| `doors` | no | Time entry/doors open, e.g. `4:00 PM` |
-| `location_name` | no | Venue name |
-| `address` | no | Full street address (becomes a map link) |
+| `name` | **yes** | Event name. *(calendar)* |
+| `full_name` | no | Longer/more descriptive name, if different from `name`. *(calendar)* |
+| `start_date` | **yes** | Event date, e.g. `7/21/2026`. *(calendar)* |
+| `end_date` | no | Defaults to `start_date` (our meetups are single-day). *(calendar)* |
+| `start_time` | **yes** | Time presentations start, e.g. `4:30 PM` |
+| `doors_time` | no | Time entry/doors open, e.g. `4:00 PM` |
+| `location` | no | `City, State, Country`, e.g. `New York, NY, USA` — distinct from `address` below. *(calendar)* |
+| `location_name` | no | Venue name, e.g. `Apple, 11 Penn Plaza` |
+| `address` | no | Full street address (becomes a map link on the event page) |
+| `organizer` | no | Usually left blank — our `name` already starts with "NYC Mac Admins", so filling this in would just restate it (macadmins-calendar's own convention). *(calendar)* |
+| `website` | no | Defaults to this event's own page (`nycmacadmins.com/events/<slug>/`) if left blank. *(calendar)* |
+| `videos` | no | Recording/YouTube link, once we have one. *(calendar)* |
 | `general_info` | no | Free-text logistics |
 | `presentation_title` | no | Talk title |
 | `presentation_info` | no | Talk abstract |
@@ -62,9 +74,21 @@ current sheet**.
 | `signup_link` | no | Registration URL (the Register button) |
 | `contact_email` | no | Defaults to info@nycmacadmins.com |
 
-`date` + `start` (and `date` + `doors`) are combined by the sync script into
-a full timestamp with the correct New York UTC offset — DST is handled
-automatically (e.g. December sits at `-05:00`, July at `-04:00`).
+(`type` isn't a column — every NYCMA row is always `"meetup"` in the
+calendar-aligned output, hardcoded by the sync script.)
+
+`start_date` + `start_time` (and `start_date` + `doors_time`) are combined
+by the sync script into a full timestamp with the correct New York UTC
+offset for the site's own use — DST is handled automatically (e.g. December
+sits at `-05:00`, July at `-04:00`). `start_date`/`end_date` are also kept
+as plain `YYYY-MM-DD` in `data/events.json`, matching macadmins-calendar's
+format exactly.
+
+**Renamed columns:** if your sheet still has the old headers `title`,
+`date`, `start`, `doors` from before this change, they still work — the
+sync script reads them as deprecated aliases for `name`, `start_date`,
+`start_time`, `doors_time`. Rename them whenever convenient; there's no
+rush and no breakage either way.
 
 ## 2. The GitHub Action
 

@@ -1,7 +1,13 @@
 {{/* Content adapter: builds one page per event from data/events.json.
      data/events.json is synced from the Google Sheet by
      scripts/sync_events.py (see .github/workflows/events-sync.yaml) — the
-     sheet is the single source of truth for events. */}}
+     sheet is the single source of truth for events.
+
+     Fields that overlap with macadmins-calendar (name, full_name,
+     start_date, end_date, location, organizer, website, type, videos) use
+     its exact field names at the data layer — see sync_events.py's
+     docstring. ".name" maps to Hugo's own "title" page-dict key below;
+     that's just Hugo's required internal key, not a data-layer rename. */}}
 {{ range hugo.Data.events }}
   {{ if ne (.status | default "published") "draft" }}
     {{ $speakers := .speakers }}
@@ -11,10 +17,18 @@
     {{ $page := dict
       "kind" "page"
       "path" .slug
-      "title" .title
+      "title" .name
       "dates" (dict "date" (time.AsTime .start))
       "params" (dict
         "status" (.status | default "published")
+        "full_name" (.full_name | default "")
+        "start_date" (.start_date | default "")
+        "end_date" (.end_date | default "")
+        "location" (.location | default "")
+        "organizer" (.organizer | default "")
+        "website" (.website | default "")
+        "type" (.type | default "meetup")
+        "videos" (.videos | default "")
         "doors" (.doors | default "")
         "location_name" (.location_name | default "")
         "address" (.address | default "")
