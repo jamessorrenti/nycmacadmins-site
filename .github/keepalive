@@ -1,0 +1,6 @@
+Touched by .github/workflows/keepalive.yaml every ~45 days to keep GitHub
+from auto-disabling the events-sync cron schedule (disabled after 60 days
+with no repo pushes — see docs/SETUP.md). deploy.yaml explicitly ignores
+this path, so touching it never rebuilds or changes the published site.
+
+last touched: 2026-09-22T00:00:00Z

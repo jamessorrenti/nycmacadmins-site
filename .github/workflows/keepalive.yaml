@@ -1,0 +1,44 @@
+name: Keepalive
+
+# GitHub auto-disables a scheduled (cron) workflow after 60 days with no
+# repository pushes. The events-sync workflow only commits when the sheet
+# actually changes, so a quiet stretch on the sheet can silently trip that
+# limit (it did once — see docs/SETUP.md). This workflow pushes a trivial,
+# content-free commit every ~45 days purely to reset that clock.
+#
+# It touches ONLY .github/keepalive, which deploy.yaml explicitly ignores
+# (paths-ignore) — so this never triggers a rebuild and never changes
+# anything on the published site or RSS feed.
+
+on:
+  schedule:
+    - cron: "0 12 1,16 * *" # the 1st and 16th of each month — comfortably under 60 days
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  touch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Touch keepalive file
+        run: |
+          cat > .github/keepalive <<EOF
+          Touched by .github/workflows/keepalive.yaml every ~45 days to keep GitHub
+          from auto-disabling the events-sync cron schedule (disabled after 60 days
+          with no repo pushes — see docs/SETUP.md). deploy.yaml explicitly ignores
+          this path, so touching it never rebuilds or changes the published site.
+
+          last touched: $(date -u '+%Y-%m-%dT%H:%M:%SZ')
+          EOF
+
+      - name: Commit and push
+        run: |
+          git config user.name "nycma-bot"
+          git config user.email "bot@nycmacadmins.com"
+          git add .github/keepalive
+          git diff --cached --quiet || git commit -m "Keepalive: reset 60-day scheduled-workflow clock"
+          git push

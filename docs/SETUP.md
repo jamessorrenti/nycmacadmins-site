@@ -123,6 +123,23 @@ When the domain owners are on board:
 4. Repo **Settings → Pages → Custom domain** → `nycmacadmins.com` → wait for
    the check → **Enforce HTTPS**.
 
+## Keeping the sync schedule alive
+
+GitHub **auto-disables a scheduled (cron) workflow after 60 days with no
+repository pushes.** The events-sync workflow only commits when the sheet
+actually changes, so a quiet stretch (no event edits) can silently trip that
+limit — it happened once, in September 2026.
+
+`.github/workflows/keepalive.yaml` runs on the 1st and 16th of every month
+and pushes a trivial, content-free commit to `.github/keepalive` purely to
+reset that clock. `deploy.yaml` explicitly ignores that path
+(`paths-ignore`), so this **never rebuilds or changes anything on the
+published site or RSS feed** — it's invisible to visitors.
+
+If events-sync ever does get disabled anyway (e.g. the keepalive itself
+stops running for some reason), re-enable it manually: repo **Actions tab →
+"Sync events from Google Sheet" → "..." menu → Enable workflow**.
+
 ## Troubleshooting
 
 - **Workflow runs but nothing updates** — check the Action's log for
