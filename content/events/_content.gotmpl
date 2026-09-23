@@ -6,18 +6,25 @@
      Fields that overlap with macadmins-calendar (name, full_name,
      start_date, end_date, location, organizer, website, type, videos) use
      its exact field names at the data layer — see sync_events.py's
-     docstring. ".name" maps to Hugo's own "title" page-dict key below;
-     that's just Hugo's required internal key, not a data-layer rename. */}}
+     docstring. Their convention is "name" for a short/common name and
+     "full_name" for a longer, more descriptive one (e.g. name: "December
+     2025 Meetup", full_name: "NYC Mac Admins December 2025 Meetup") — our
+     own site and RSS use full_name (falling back to name if blank) as the
+     page title, since "name" alone reads ambiguously out of context (an
+     RSS reader, a shared link). That maps into Hugo's own required
+     "title" page-dict key below; that's just Hugo's internal key, not a
+     data-layer rename. */}}
 {{ range hugo.Data.events }}
   {{ if ne (.status | default "published") "draft" }}
     {{ $speakers := .speakers }}
     {{ if not (reflect.IsSlice $speakers) }}
       {{ $speakers = split (string ($speakers | default "")) "," }}
     {{ end }}
+    {{ $displayTitle := .full_name | default .name }}
     {{ $page := dict
       "kind" "page"
       "path" .slug
-      "title" .name
+      "title" $displayTitle
       "dates" (dict "date" (time.AsTime .start))
       "params" (dict
         "status" (.status | default "published")
@@ -29,6 +36,7 @@
         "website" (.website | default "")
         "type" (.type | default "meetup")
         "videos" (.videos | default "")
+        "language" (.language | default "en")
         "doors" (.doors | default "")
         "location_name" (.location_name | default "")
         "address" (.address | default "")

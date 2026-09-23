@@ -17,22 +17,29 @@ not a secret, since the sheet itself is public.
 Fields that overlap with the community calendar at
 https://github.com/macadminsdotorg/macadmins-calendar use ITS exact field
 names (name, full_name, start_date, end_date, location, organizer, website,
-type, videos) — see that repo's README for the spec. That makes submitting
-an event there a straight field copy, no renaming. Everything else below is
-NYCMA-specific and rides alongside.
+type, videos, language) — see that repo's README for the spec. That makes
+submitting an event there a straight field copy, no renaming. Everything
+else below is NYCMA-specific and rides alongside.
+
+Their convention: "name" is a short/common name, "full_name" is longer and
+more descriptive (e.g. name: "December 2025 Meetup", full_name: "NYC Mac
+Admins December 2025 Meetup"). Our own site and RSS use full_name (falling
+back to name) as the displayed title — see content/events/_content.gotmpl —
+so short names read fine on macadmins-calendar without looking bare on ours.
 
 Sheet columns (header row, order doesn't matter; case-insensitive):
 
   Matches macadmins-calendar's field names exactly:
-    name            required   event name, e.g. "NYC Mac Admins July 2026 Meetup"
-    full_name       optional   longer/more descriptive name
+    name            required   short event name, e.g. "December 2025 Meetup"
+    full_name       optional   longer/more descriptive name; used as our own page title
     start_date      required   M/D/YYYY or YYYY-MM-DD, e.g. 7/21/2026
     end_date        optional   same formats; defaults to start_date (we're single-day)
     location        optional   "City, State, Country", e.g. "New York, NY, USA"
     organizer       optional   omit when it'd just restate the event name (their convention)
     website         optional   defaults to this event's own page URL if left blank
+    type            optional   defaults to "meetup"; we're not only meetups forever
     videos          optional   recording/YouTube link
-    (type is not a column — always hardcoded to "meetup" for every row)
+    language        optional   defaults to "en"; set explicitly to override
 
   NYCMA-specific (not in their schema):
     slug            optional   URL id; auto-derived from start_date + name if blank
@@ -195,6 +202,8 @@ def build_event(row: dict) -> dict | None:
     slug = row_get(row, "slug") or derive_slug(start_date_str, name)
     speakers = [s.strip() for s in row_get(row, "speakers").split(",") if s.strip()]
     website = row_get(row, "website") or f"{SITE_URL}/events/{slug}/"
+    event_type = row_get(row, "type") or "meetup"
+    language = row_get(row, "language") or "en"
 
     return {
         # --- matches macadmins-calendar's field names exactly ---
@@ -205,8 +214,9 @@ def build_event(row: dict) -> dict | None:
         "location": row_get(row, "location"),
         "organizer": row_get(row, "organizer"),
         "website": website,
-        "type": "meetup",
+        "type": event_type,
         "videos": row_get(row, "videos"),
+        "language": language,
         # --- NYCMA-specific ---
         "slug": slug,
         "status": status,

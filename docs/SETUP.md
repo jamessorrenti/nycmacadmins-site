@@ -52,8 +52,8 @@ reshaping. Everything else is NYCMA-specific and unrelated to that project.
 |---|---|---|
 | `slug` | no | URL id, e.g. `2026-07-21-july-meetup`. Auto-derived from start_date+name if blank. **Don't change it after publishing** (it's the RSS guid + page URL). |
 | `status` | no | `published` (default) / `draft` (never synced) / `canceled` (shows a Canceled banner) |
-| `name` | **yes** | Event name. *(calendar)* |
-| `full_name` | no | Longer/more descriptive name, if different from `name`. *(calendar)* |
+| `name` | **yes** | Short/common event name, e.g. `December 2025 Meetup`. *(calendar)* |
+| `full_name` | no | Longer, more descriptive name, e.g. `NYC Mac Admins December 2025 Meetup`. **Our own site and RSS display this** (falling back to `name` if blank) — see note below. *(calendar)* |
 | `start_date` | **yes** | Event date, e.g. `7/21/2026`. *(calendar)* |
 | `end_date` | no | Defaults to `start_date` (our meetups are single-day). *(calendar)* |
 | `start_time` | **yes** | Time presentations start, e.g. `4:30 PM` |
@@ -61,9 +61,11 @@ reshaping. Everything else is NYCMA-specific and unrelated to that project.
 | `location` | no | `City, State, Country`, e.g. `New York, NY, USA` — distinct from `address` below. *(calendar)* |
 | `location_name` | no | Venue name, e.g. `Apple, 11 Penn Plaza` |
 | `address` | no | Full street address (becomes a map link on the event page) |
-| `organizer` | no | Usually left blank — our `name` already starts with "NYC Mac Admins", so filling this in would just restate it (macadmins-calendar's own convention). *(calendar)* |
+| `organizer` | no | e.g. `NYC Mac Admins` — fine to fill in now that `name` is short and doesn't already restate it (macadmins-calendar's own convention is to omit when it would). *(calendar)* |
 | `website` | no | Defaults to this event's own page (`nycmacadmins.com/events/<slug>/`) if left blank. *(calendar)* |
+| `type` | no | Defaults to `"meetup"` — set explicitly if we ever run a workshop, webinar, etc. *(calendar)* |
 | `videos` | no | Recording/YouTube link, once we have one. *(calendar)* |
+| `language` | no | Defaults to `"en"` — set explicitly to override. *(calendar)* |
 | `general_info` | no | Free-text logistics |
 | `presentation_title` | no | Talk title |
 | `presentation_info` | no | Talk abstract |
@@ -74,8 +76,14 @@ reshaping. Everything else is NYCMA-specific and unrelated to that project.
 | `signup_link` | no | Registration URL (the Register button) |
 | `contact_email` | no | Defaults to info@nycmacadmins.com |
 
-(`type` isn't a column — every NYCMA row is always `"meetup"` in the
-calendar-aligned output, hardcoded by the sync script.)
+**`name` vs `full_name`:** macadmins-calendar's own convention is a short
+`name` ("December 2025 Meetup") and a longer `full_name` ("NYC Mac Admins
+December 2025 Meetup"). Our site follows suit at the *data* layer to keep
+calendar submissions a clean field copy — but our own pages, cards, and RSS
+titles use `full_name` (falling back to `name` if left blank), since the
+short form alone reads ambiguously out of context (an RSS reader, a shared
+link). So: fill in `full_name` for anything you want fully branded on our
+site; `name` alone is fine if you're happy with the short form everywhere.
 
 `start_date` + `start_time` (and `start_date` + `doors_time`) are combined
 by the sync script into a full timestamp with the correct New York UTC
