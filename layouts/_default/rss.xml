@@ -1,6 +1,7 @@
 {{- /* Events RSS feed. Rendered for the events section at /events/index.xml.
      Items: every published event, newest first. pubDate = event start. */ -}}
 {{- printf "<?xml version=\"1.0\" encoding=\"utf-8\" standalone=\"yes\"?>" | safeHTML }}
+{{ printf "<?xml-stylesheet type=\"text/xsl\" href=\"%s\"?>" ("feed.xsl" | relURL) | safeHTML }}
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>NYC Mac Admins Events</title>
