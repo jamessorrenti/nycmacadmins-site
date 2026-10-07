@@ -86,5 +86,37 @@
     "sponsor_link": "https://addigy.com/",
     "signup_link": "https://forms.gle/nqDXZ9GqR8J6JmA5A",
     "contact_email": "info@nycmacadmins.com"
+  },
+  {
+    "name": "October 2026 Meetup",
+    "full_name": "NYC Mac Admins October 2026 Meetup",
+    "start_date": "2026-10-27",
+    "end_date": "2026-10-27",
+    "location": "New York, NY",
+    "organizer": "NYC Mac Admins",
+    "website": "https://nycmacadmins.com",
+    "type": "meetup",
+    "videos": "",
+    "language": "en",
+    "slug": "2026-10-27-october-meetup",
+    "status": "published",
+    "start": "2026-10-27T16:30:00-04:00",
+    "doors": "2026-10-27T16:00:00-04:00",
+    "location_name": "Midtown",
+    "address": "Address provided upon registration",
+    "general_info": "Entry begins at 4:00pm with presentations and discussions beginning at 4:30pm.",
+    "presentation_title": "No More Silos",
+    "presentation_info": "How JSOC IT leverages the Apple ecosystem to help unify IT, Security, and Compliance into one stack.",
+    "speakers": [
+      "Sergio Quesada",
+      "Leila Saifi",
+      "Jason Rose",
+      "Chan Patel"
+    ],
+    "sponsor": "Fleet",
+    "sponsor_info": "Thanks to this month's sponsor, Fleet, for providing food and refreshments.",
+    "sponsor_link": "htttps://fleetdm.com",
+    "signup_link": "https://forms.gle/M9ErG92rfvpe1ebNA",
+    "contact_email": "info@nycmacadmins.com"
   }
 ]
