@@ -26,6 +26,10 @@
           .notice { background: #fff; border: 1px solid rgba(17,18,20,.12); border-left: 4px solid #F4CE47; border-radius: 8px; padding: 16px 20px; margin: 28px 0; }
           .notice code { background: #F5F6F8; padding: 2px 6px; border-radius: 4px; word-break: break-all; }
           .notice a { color: #314FA6; font-weight: 700; }
+          .urlrow { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin: 8px 0; }
+          .urlrow code { flex: 1 1 260px; }
+          .copy { font-family: "Oswald", "Arial Narrow", sans-serif; text-transform: uppercase; letter-spacing: .08em; font-size: .8rem; font-weight: 600; background: #F4CE47; color: #111214; border: 0; border-radius: 8px; padding: 8px 16px; cursor: pointer; }
+          .copy:hover { background: #D9B32A; }
           .card { background: #fff; border: 1px solid rgba(17,18,20,.12); border-radius: 14px; padding: 20px 24px; margin-bottom: 16px; }
           .card h2 { font-family: "Oswald", "Arial Narrow", sans-serif; text-transform: uppercase; font-size: 1.3rem; margin: 0 0 4px; line-height: 1.15; }
           .card h2 a { color: inherit; text-decoration: none; }
@@ -35,6 +39,29 @@
           footer { text-align: center; color: #5A5F66; font-size: .9rem; padding: 12px 24px 48px; }
           footer a { color: #314FA6; }
         </style>
+        <script>
+          function copyFeed(btn) {
+            var text = document.getElementById("feed-url").textContent;
+            var label = btn.textContent;
+            function done() {
+              btn.textContent = "Copied!";
+              setTimeout(function () { btn.textContent = label; }, 1500);
+            }
+            function fallback() {
+              var range = document.createRange();
+              range.selectNodeContents(document.getElementById("feed-url"));
+              var sel = window.getSelection();
+              sel.removeAllRanges();
+              sel.addRange(range);
+              try { document.execCommand("copy"); done(); } catch (e) { btn.textContent = "Press Cmd/Ctrl+C"; }
+            }
+            if (navigator.clipboard) {
+              navigator.clipboard.writeText(text).then(done, fallback);
+            } else {
+              fallback();
+            }
+          }
+        </script>
       </head>
       <body>
         <header>
@@ -48,7 +75,7 @@
           <div class="notice">
             <strong>This is an RSS feed.</strong> Copy this page's URL into your feed reader
             (or a Slack channel with <code>/feed subscribe</code>) to get new meetups as they're announced:
-            <br/><code><xsl:value-of select="atom:link/@href"/></code>
+            <div class="urlrow"><code id="feed-url"><xsl:value-of select="atom:link/@href"/></code><button type="button" class="copy" onclick="copyFeed(this)">Copy</button></div>
             <br/><a href="{link}">&#8592; Back to nycmacadmins.com</a>
           </div>
           <xsl:for-each select="item">
