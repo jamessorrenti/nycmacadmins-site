@@ -24,7 +24,8 @@
           h1 .accent { color: #F4CE47; }
           header p { margin: 0; color: rgba(255,255,255,.78); }
           .notice { background: #fff; border: 1px solid rgba(17,18,20,.12); border-left: 4px solid #F4CE47; border-radius: 8px; padding: 16px 20px; margin: 28px 0; }
-          .notice code { background: #F5F6F8; padding: 2px 6px; border-radius: 4px; word-break: break-all; }
+          .notice code { background: #F5F6F8; padding: 2px 6px; border-radius: 4px; white-space: nowrap; }
+          .notice code#feed-url { white-space: normal; word-break: break-all; }
           .notice a { color: #314FA6; font-weight: 700; }
           .urlrow { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin: 8px 0; }
           .urlrow code { flex: 1 1 260px; }
