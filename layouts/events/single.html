@@ -1,5 +1,6 @@
 {{ define "main" }}
 
+{{/* Address becomes a map link only when it starts with a street number; placeholders like "Address provided upon registration" stay plain text. */}}
 {{ $isPast := lt (add .Date.Unix 21600) now.Unix }}
 {{ $canceled := eq .Params.status "canceled" }}
 
@@ -13,7 +14,7 @@
       <span>{{ .Params.location_name }}</span>
       {{ end }}
       {{ with .Params.address }}
-      <a href="https://maps.apple.com/?q={{ . | urlquery }}" target="_blank" rel="noopener">{{ . }}</a>
+      {{ if findRE `^\d` . }}<a href="https://maps.apple.com/?q={{ . | urlquery }}" target="_blank" rel="noopener">{{ . }}</a>{{ else }}<span>{{ . }}</span>{{ end }}
       {{ end }}
     </div>
     {{ if and .Params.signup_link (not $isPast) (not $canceled) }}
@@ -68,7 +69,7 @@
       <p>{{ .Params.location_name }}</p>
       {{ end }}
       {{ with .Params.address }}
-      <p><a href="https://maps.apple.com/?q={{ . | urlquery }}" target="_blank" rel="noopener">{{ . }}</a></p>
+      <p>{{ if findRE `^\d` . }}<a href="https://maps.apple.com/?q={{ . | urlquery }}" target="_blank" rel="noopener">{{ . }}</a>{{ else }}{{ . }}{{ end }}</p>
       {{ end }}
       {{ end }}
 
