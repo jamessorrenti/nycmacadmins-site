@@ -18,8 +18,8 @@
           body { margin: 0; font-family: "Lato", -apple-system, "Segoe UI", sans-serif; color: #111214; background: #F5F6F8; line-height: 1.6; }
           header { background: #111214; color: #fff; padding: 48px 24px 40px; }
           .wrap { max-width: 760px; margin: 0 auto; }
-          .dots span { display: inline-block; width: 28px; height: 28px; border-radius: 50%; margin-right: 6px; }
-          .n { background: #F4CE47; } .y { background: #111214; box-shadow: 0 0 0 2px rgba(255,255,255,.85); } .c { background: #314FA6; }
+          .dots span { display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 50%; margin-right: 8px; font-family: "Menlo", "SF Mono", ui-monospace, monospace; font-weight: 700; font-size: 20px; line-height: 1; }
+          .n { background: #F4CE47; color: #111214; } .y { background: #111214; color: #fff; box-shadow: 0 0 0 2px rgba(255,255,255,.85); } .c { background: #314FA6; color: #fff; }
           h1 { font-family: "Oswald", "Arial Narrow", sans-serif; text-transform: uppercase; letter-spacing: .01em; font-size: 2.4rem; margin: 18px 0 8px; }
           header p { margin: 0; color: rgba(255,255,255,.78); }
           .notice { background: #fff; border: 1px solid rgba(17,18,20,.12); border-left: 4px solid #F4CE47; border-radius: 8px; padding: 16px 20px; margin: 28px 0; }
@@ -38,7 +38,7 @@
       <body>
         <header>
           <div class="wrap">
-            <div class="dots"><span class="n"></span><span class="y"></span><span class="c"></span></div>
+            <div class="dots"><span class="n">N</span><span class="y">Y</span><span class="c">C</span></div>
             <h1><xsl:value-of select="title"/></h1>
             <p><xsl:value-of select="description"/></p>
           </div>
