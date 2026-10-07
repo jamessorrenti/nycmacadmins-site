@@ -40,7 +40,7 @@
         <header>
           <div class="wrap">
             <div class="dots"><span class="n">N</span><span class="y">Y</span><span class="c">C</span></div>
-            <h1>Mac Admins,<br/><span class="accent">Events</span></h1>
+            <h1>Mac Admins,<br/><span class="accent">Events.</span></h1>
             <p><xsl:value-of select="description"/></p>
           </div>
         </header>
