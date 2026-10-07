@@ -14,7 +14,7 @@
       <span>{{ .Params.location_name }}</span>
       {{ end }}
       {{ with .Params.address }}
-      {{ if findRE `^\d` . }}<a href="https://maps.apple.com/?q={{ . | urlquery }}" target="_blank" rel="noopener">{{ . }}</a>{{ else }}<span>{{ . }}</span>{{ end }}
+      {{ if findRE `^\d` . }}<a href="https://maps.apple.com/?q={{ . | urlquery }}" target="_blank" rel="noopener">{{ . }}</a>{{ else }}<em>{{ . }}</em>{{ end }}
       {{ end }}
     </div>
     {{ if and .Params.signup_link (not $isPast) (not $canceled) }}
@@ -69,13 +69,13 @@
       <p>{{ .Params.location_name }}</p>
       {{ end }}
       {{ with .Params.address }}
-      <p>{{ if findRE `^\d` . }}<a href="https://maps.apple.com/?q={{ . | urlquery }}" target="_blank" rel="noopener">{{ . }}</a>{{ else }}{{ . }}{{ end }}</p>
+      <p>{{ if findRE `^\d` . }}<a href="https://maps.apple.com/?q={{ . | urlquery }}" target="_blank" rel="noopener">{{ . }}</a>{{ else }}<em>{{ . }}</em>{{ end }}</p>
       {{ end }}
       {{ end }}
 
       {{ with .Params.sponsor }}
       <h3>Sponsor</h3>
-      <p>{{ if $.Params.sponsor_link }}<a href="{{ $.Params.sponsor_link }}" target="_blank" rel="noopener">{{ . }}</a>{{ else }}{{ . }}{{ end }}</p>
+      <p>{{ if $.Params.sponsor_link }}<a href="{{ $.Params.sponsor_link }}" target="_blank" rel="noopener">{{ . }}</a>{{ else }}<em>{{ . }}</em>{{ end }}</p>
       {{ end }}
 
       <h3>Contact</h3>
